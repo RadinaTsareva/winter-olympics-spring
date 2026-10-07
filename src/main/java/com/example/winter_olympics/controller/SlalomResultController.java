@@ -7,6 +7,7 @@ import com.example.winter_olympics.repository.CompetitionRegistrationRepository;
 import com.example.winter_olympics.repository.SlalomResultRepository;
 import com.example.winter_olympics.service.SlalomService;
 import com.example.winter_olympics.dto.SlalomRankingResponse;
+import com.example.winter_olympics.dto.SlalomResultResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +52,11 @@ public class SlalomResultController {
         result.setFirstRunTime(request.getTime());
         result.setFirstRunFinished(request.getFinished());
 
+        if (!request.getFinished()) {
+            result.setSecondRunTime(null);
+            result.setSecondRunFinished(false);
+        }
+
         return resultRepository.save(result);
     }
 
@@ -71,10 +77,53 @@ public class SlalomResultController {
                 .orElseThrow(() ->
                         new RuntimeException("First run result not found"));
 
+        if (!result.isFirstRunFinished()) {
+            throw new RuntimeException(
+                    "Athlete did not finish the first run"
+            );
+        }
+
+        List<SlalomResult> secondRunParticipants =
+                slalomService.getSecondRunParticipants(
+                        registration.getCompetition().getId()
+                );
+
+        boolean qualified = secondRunParticipants.stream()
+                .anyMatch(r ->
+                        r.getRegistration().getId()
+                                .equals(registration.getId())
+                );
+
+        if (!qualified) {
+            throw new RuntimeException(
+                    "Athlete is not qualified for the second run"
+            );
+        }
+
         result.setSecondRunTime(request.getTime());
         result.setSecondRunFinished(request.getFinished());
 
         return resultRepository.save(result);
+    }
+
+    @GetMapping("/second-run/participants/{competitionId}")
+    public List<SlalomResultResponse> getSecondRunParticipants(
+            @PathVariable Long competitionId) {
+
+        return slalomService.getSecondRunParticipants(competitionId)
+                .stream()
+                .map(slalomService::toResponse)
+                .toList();
+    }
+
+    @GetMapping("/second-run/start-order/{competitionId}")
+    public List<SlalomResultResponse> getSecondRunStartOrder(
+            @PathVariable Long competitionId) {
+
+        return slalomService.getSecondRunStartOrder(competitionId)
+                .stream()
+                .map(slalomService::toResponse)
+                .toList();
     }
 
     @GetMapping("/ranking/{competitionId}")
