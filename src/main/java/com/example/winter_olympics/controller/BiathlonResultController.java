@@ -4,7 +4,9 @@ import com.example.winter_olympics.dto.BiathlonResultRequest;
 import com.example.winter_olympics.dto.BiathlonResultResponse;
 import com.example.winter_olympics.dto.BiathlonRankingResponse;
 import com.example.winter_olympics.entity.BiathlonResult;
+import com.example.winter_olympics.entity.Competition;
 import com.example.winter_olympics.entity.CompetitionRegistration;
+import com.example.winter_olympics.entity.CompetitionType;
 import com.example.winter_olympics.repository.BiathlonResultRepository;
 import com.example.winter_olympics.repository.CompetitionRegistrationRepository;
 import com.example.winter_olympics.service.BiathlonService;
@@ -41,6 +43,22 @@ public class BiathlonResultController {
                 registrationRepository.findById(request.getRegistrationId())
                         .orElseThrow(() ->
                                 new RuntimeException("Registration not found"));
+
+        if (registration.getCompetition().getType() != CompetitionType.BIATHLON) {
+            throw new RuntimeException(
+                    "Registration is not for a biathlon competition"
+            );
+        }
+
+        Competition competition = registration.getCompetition();
+
+        if (competition.getNumberOfLaps() == null ||
+                competition.getShootingAfterLaps() == null) {
+
+            throw new RuntimeException(
+                    "Biathlon competition is missing lap or shooting settings"
+            );
+        }
 
         BiathlonResult result = resultRepository.findAll()
                 .stream()

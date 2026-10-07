@@ -1,6 +1,7 @@
 package com.example.winter_olympics.controller;
 
 import com.example.winter_olympics.dto.AthleteRequest;
+import com.example.winter_olympics.dto.AthleteResponse;
 import com.example.winter_olympics.entity.Athlete;
 import com.example.winter_olympics.entity.Country;
 import com.example.winter_olympics.entity.User;
@@ -35,14 +36,19 @@ public class AthleteController {
     }
 
     @GetMapping
-    public List<Athlete> getAllAthletes() {
-        return athleteRepository.findAll();
+    public List<AthleteResponse> getAll() {
+        return athleteRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public Athlete getAthleteById(@PathVariable Long id) {
-        return athleteRepository.findById(id)
+    public AthleteResponse getById(@PathVariable Long id) {
+        Athlete athlete = athleteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Athlete not found"));
+
+        return toResponse(athlete);
     }
 
     @PostMapping
@@ -105,5 +111,16 @@ public class AthleteController {
                 !user.getAthlete().getId().equals(athleteId)) {
             throw new ForbiddenException("You can only modify your own athlete data");
         }
+    }
+
+    private AthleteResponse toResponse(Athlete athlete) {
+        return new AthleteResponse(
+                athlete.getId(),
+                athlete.getName(),
+                athlete.getCountry().getId(),
+                athlete.getCountry().getName(),
+                athlete.getGender(),
+                athlete.getDateOfBirth()
+        );
     }
 }
