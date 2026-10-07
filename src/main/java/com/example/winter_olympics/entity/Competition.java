@@ -24,6 +24,12 @@ public class Competition {
     @Column(name = "minimum_age", nullable = false)
     private int minimumAge;
 
+    @Column(name = "number_of_laps")
+    private Integer numberOfLaps;
+
+    @Column(name = "shooting_after_laps")
+    private Integer shootingAfterLaps;
+
     public Competition() {
     }
 
@@ -31,12 +37,16 @@ public class Competition {
             String name,
             CompetitionType type,
             Gender gender,
-            int minimumAge
+            int minimumAge,
+            Integer numberOfLaps,
+            Integer shootingAfterLaps
     ) {
         this.name = name;
         this.type = type;
         this.gender = gender;
         this.minimumAge = minimumAge;
+        this.numberOfLaps = numberOfLaps;
+        this.shootingAfterLaps = shootingAfterLaps;
     }
 
     public Long getId() {
@@ -73,5 +83,21 @@ public class Competition {
 
     public void setMinimumAge(int minimumAge) {
         this.minimumAge = minimumAge;
+    }
+
+    public Integer getNumberOfLaps() {
+        return numberOfLaps;
+    }
+
+    public void setNumberOfLaps(Integer numberOfLaps) {
+        this.numberOfLaps = numberOfLaps;
+    }
+
+    public Integer getShootingAfterLaps() {
+        return shootingAfterLaps;
+    }
+
+    public void setShootingAfterLaps(Integer shootingAfterLaps) {
+        this.shootingAfterLaps = shootingAfterLaps;
     }
 }
