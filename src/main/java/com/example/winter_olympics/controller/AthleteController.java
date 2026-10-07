@@ -3,12 +3,17 @@ package com.example.winter_olympics.controller;
 import com.example.winter_olympics.dto.AthleteRequest;
 import com.example.winter_olympics.entity.Athlete;
 import com.example.winter_olympics.entity.Country;
+import com.example.winter_olympics.entity.User;
+import com.example.winter_olympics.exception.ForbiddenException;
 import com.example.winter_olympics.repository.AthleteRepository;
 import com.example.winter_olympics.repository.CountryRepository;
+import com.example.winter_olympics.repository.UserRepository;
+import org.springframework.security.core.Authentication;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.*;
 import java.util.List;
 
 @RestController
@@ -17,13 +22,16 @@ public class AthleteController {
 
     private final AthleteRepository athleteRepository;
     private final CountryRepository countryRepository;
+    private final UserRepository userRepository;
 
     public AthleteController(
             AthleteRepository athleteRepository,
-            CountryRepository countryRepository
+            CountryRepository countryRepository,
+            UserRepository userRepository
     ) {
         this.athleteRepository = athleteRepository;
         this.countryRepository = countryRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -57,8 +65,11 @@ public class AthleteController {
     @PutMapping("/{id}")
     public Athlete updateAthlete(
             @PathVariable Long id,
-            @Valid @RequestBody AthleteRequest request
+            @Valid @RequestBody AthleteRequest request,
+            Authentication authentication
     ) {
+        checkOwnership(id, authentication);
+
         Athlete athlete = athleteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Athlete not found"));
 
@@ -75,7 +86,24 @@ public class AthleteController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAthlete(@PathVariable Long id) {
+    public void deleteAthlete(@PathVariable Long id, Authentication authentication) {
+        checkOwnership(id, authentication);
         athleteRepository.deleteById(id);
+    }
+
+    private void checkOwnership(Long athleteId, Authentication authentication) {
+
+        if (authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+            return;
+        }
+
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getAthlete() == null ||
+                !user.getAthlete().getId().equals(athleteId)) {
+            throw new ForbiddenException("You can only modify your own athlete data");
+        }
     }
 }
