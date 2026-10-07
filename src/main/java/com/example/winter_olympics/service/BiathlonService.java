@@ -1,13 +1,15 @@
 package com.example.winter_olympics.service;
 
+import com.example.winter_olympics.dto.BiathlonRankingResponse;
+import com.example.winter_olympics.dto.BiathlonResultResponse;
 import com.example.winter_olympics.entity.BiathlonResult;
 import com.example.winter_olympics.repository.BiathlonResultRepository;
-import com.example.winter_olympics.dto.BiathlonResultResponse;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Service
 public class BiathlonService {
@@ -19,13 +21,11 @@ public class BiathlonService {
     }
 
     public BigDecimal calculatePenalty(BiathlonResult result) {
-
         return result.getPenaltyPerMiss()
                 .multiply(BigDecimal.valueOf(result.getMisses()));
     }
 
     public BigDecimal calculateFinalTime(BiathlonResult result) {
-
         if (!result.isFinished()) {
             return null;
         }
@@ -65,6 +65,28 @@ public class BiathlonService {
                 .filter(BiathlonResult::isFinished)
                 .filter(result -> result.getSkiTime() != null)
                 .sorted(Comparator.comparing(this::calculateFinalTime))
+                .toList();
+    }
+
+    public List<BiathlonRankingResponse> getRankingResponse(Long competitionId) {
+
+        List<BiathlonResult> results = getRanking(competitionId);
+
+        return IntStream.range(0, results.size())
+                .mapToObj(index -> {
+
+                    BiathlonResult result = results.get(index);
+
+                    return new BiathlonRankingResponse(
+                            index + 1,
+                            result.getRegistration().getAthlete().getName(),
+                            result.getRegistration().getAthlete().getCountry().getName(),
+                            result.getSkiTime(),
+                            result.getMisses(),
+                            calculatePenalty(result),
+                            calculateFinalTime(result)
+                    );
+                })
                 .toList();
     }
 }

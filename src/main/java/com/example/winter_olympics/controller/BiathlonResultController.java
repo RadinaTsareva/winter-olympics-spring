@@ -2,6 +2,7 @@ package com.example.winter_olympics.controller;
 
 import com.example.winter_olympics.dto.BiathlonResultRequest;
 import com.example.winter_olympics.dto.BiathlonResultResponse;
+import com.example.winter_olympics.dto.BiathlonRankingResponse;
 import com.example.winter_olympics.entity.BiathlonResult;
 import com.example.winter_olympics.entity.CompetitionRegistration;
 import com.example.winter_olympics.repository.BiathlonResultRepository;
@@ -64,12 +65,9 @@ public class BiathlonResultController {
     }
 
     @GetMapping("/ranking/{competitionId}")
-    public List<BiathlonResultResponse> getRanking(
+    public List<BiathlonRankingResponse> getRanking(
             @PathVariable Long competitionId
     ) {
-        return biathlonService.getRanking(competitionId)
-                .stream()
-                .map(biathlonService::toResponse)
-                .toList();
+        return biathlonService.getRankingResponse(competitionId);
     }
 }
