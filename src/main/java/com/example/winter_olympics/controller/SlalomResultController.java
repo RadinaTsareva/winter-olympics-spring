@@ -2,6 +2,7 @@ package com.example.winter_olympics.controller;
 
 import com.example.winter_olympics.dto.SlalomResultRequest;
 import com.example.winter_olympics.entity.CompetitionRegistration;
+import com.example.winter_olympics.entity.CompetitionType;
 import com.example.winter_olympics.entity.SlalomResult;
 import com.example.winter_olympics.repository.CompetitionRegistrationRepository;
 import com.example.winter_olympics.repository.SlalomResultRepository;
@@ -42,6 +43,12 @@ public class SlalomResultController {
                         .orElseThrow(() ->
                                 new RuntimeException("Registration not found"));
 
+        if (registration.getCompetition().getType() != CompetitionType.SKI_SLALOM) {
+            throw new RuntimeException(
+                    "Registration is not for a ski slalom competition"
+            );
+        }
+
         SlalomResult result = resultRepository.findAll()
                 .stream()
                 .filter(r -> r.getRegistration().getId()
@@ -51,6 +58,9 @@ public class SlalomResultController {
 
         result.setFirstRunTime(request.getTime());
         result.setFirstRunFinished(request.getFinished());
+
+        result.setSecondRunTime(null);
+        result.setSecondRunFinished(false);
 
         if (!request.getFinished()) {
             result.setSecondRunTime(null);
@@ -68,6 +78,12 @@ public class SlalomResultController {
                 registrationRepository.findById(request.getRegistrationId())
                         .orElseThrow(() ->
                                 new RuntimeException("Registration not found"));
+
+        if (registration.getCompetition().getType() != CompetitionType.SKI_SLALOM) {
+            throw new RuntimeException(
+                    "Registration is not for a ski slalom competition"
+            );
+        }
 
         SlalomResult result = resultRepository.findAll()
                 .stream()

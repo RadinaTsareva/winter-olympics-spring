@@ -5,4 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CompetitionRegistrationRepository
         extends JpaRepository<CompetitionRegistration, Long> {
+    boolean existsByAthleteIdAndCompetitionId(
+            Long athleteId,
+            Long competitionId
+    );
 }
