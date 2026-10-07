@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: winter-olympics-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: winter_olympics
+      POSTGRES_USER: olympics
+      POSTGRES_PASSWORD: olympics
+    ports:
+      - "5434:5432"
+    volumes:
+      - winter_olympics_data:/var/lib/postgresql/data
+
+volumes:
+  winter_olympics_data:
