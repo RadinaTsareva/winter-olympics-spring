@@ -4,12 +4,16 @@ import com.example.winter_olympics.dto.TestDataResponse;
 import com.example.winter_olympics.entity.*;
 import com.example.winter_olympics.repository.*;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.winter_olympics.exception.BadRequestException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @Service
@@ -22,6 +26,9 @@ public class TestDataService {
     private final SlalomResultRepository slalomResultRepository;
     private final BiathlonResultRepository biathlonResultRepository;
     private final JdbcTemplate jdbcTemplate;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final String demoAthletePassword;
 
     public TestDataService(
             CountryRepository countryRepository,
@@ -30,7 +37,10 @@ public class TestDataService {
             CompetitionRegistrationRepository registrationRepository,
             SlalomResultRepository slalomResultRepository,
             BiathlonResultRepository biathlonResultRepository,
-            JdbcTemplate jdbcTemplate
+            JdbcTemplate jdbcTemplate,
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            @Value("${app.demo.athlete-password:}") String demoAthletePassword
     ) {
         this.countryRepository = countryRepository;
         this.athleteRepository = athleteRepository;
@@ -39,10 +49,18 @@ public class TestDataService {
         this.slalomResultRepository = slalomResultRepository;
         this.biathlonResultRepository = biathlonResultRepository;
         this.jdbcTemplate = jdbcTemplate;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.demoAthletePassword = demoAthletePassword;
     }
 
     @Transactional
     public synchronized TestDataResponse createDemoData() {
+        if (demoAthletePassword == null || demoAthletePassword.isBlank()) {
+            throw new BadRequestException(
+                    "Set DEMO_ATHLETE_PASSWORD on the backend before creating test data"
+            );
+        }
         // A transaction-scoped PostgreSQL advisory lock prevents concurrent app instances
         // from racing the stable-identity lookups and inserting duplicate demo records.
         jdbcTemplate.execute("SELECT pg_advisory_xact_lock(731942018)");
@@ -69,6 +87,12 @@ public class TestDataService {
             Seed<Athlete> seed = seedAthlete(spec, countries.get(spec.country()));
             athletes.put(spec.name(), seed.value());
             if (seed.created()) counts.athletesCreated++; else counts.athletesReused++;
+        }
+
+        for (AthleteSpec spec : specs) {
+            Seed<User> seed = seedDemoUser(spec, athletes.get(spec.name()));
+            if (seed.created()) counts.usersCreated++; else counts.usersReused++;
+            counts.demoUsernames.add(seed.value().getUsername());
         }
 
         Map<String, Competition> competitions = new HashMap<>();
@@ -158,6 +182,29 @@ public class TestDataService {
                         spec.numberOfLaps(), spec.shootingAfterLaps())), true));
     }
 
+    private Seed<User> seedDemoUser(AthleteSpec spec, Athlete athlete) {
+        String username = "demo." + spec.name().toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", ".")
+                .replaceAll("^\\.|\\.$", "");
+
+        return userRepository.findByUsername(username)
+                .map(user -> {
+                    if (user.getRole() != Role.ATHLETE || user.getAthlete() == null
+                            || !user.getAthlete().getId().equals(athlete.getId())) {
+                        throw new BadRequestException(
+                                "Demo username is already associated with another account: " + username
+                        );
+                    }
+                    return new Seed<>(user, false);
+                })
+                .orElseGet(() -> {
+                    User user = new User(username,
+                            passwordEncoder.encode(demoAthletePassword), Role.ATHLETE);
+                    user.setAthlete(athlete);
+                    return new Seed<>(userRepository.save(user), true);
+                });
+    }
+
     private Seed<CompetitionRegistration> seedRegistration(
             Athlete athlete, Competition competition) {
         return registrationRepository.findFirstByAthlete_IdAndCompetition_Id(
@@ -230,13 +277,15 @@ public class TestDataService {
     private static class Counts {
         int countriesCreated, countriesReused;
         int athletesCreated, athletesReused;
+        int usersCreated, usersReused;
+        java.util.List<String> demoUsernames = new java.util.ArrayList<>();
         int competitionsCreated, competitionsReused;
         int registrationsCreated, registrationsReused;
         int slalomResultsCreated, slalomResultsReused;
         int biathlonResultsCreated, biathlonResultsReused;
 
         int totalCreated() {
-            return countriesCreated + athletesCreated + competitionsCreated
+            return countriesCreated + athletesCreated + usersCreated + competitionsCreated
                     + registrationsCreated + slalomResultsCreated + biathlonResultsCreated;
         }
 
@@ -244,6 +293,7 @@ public class TestDataService {
             return new TestDataResponse(message,
                     countriesCreated, countriesReused,
                     athletesCreated, athletesReused,
+                    usersCreated, usersReused, demoUsernames,
                     competitionsCreated, competitionsReused,
                     registrationsCreated, registrationsReused,
                     slalomResultsCreated, slalomResultsReused,

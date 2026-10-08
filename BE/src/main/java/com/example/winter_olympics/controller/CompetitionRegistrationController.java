@@ -15,6 +15,7 @@ import com.example.winter_olympics.entity.Role;
 import com.example.winter_olympics.entity.User;
 import com.example.winter_olympics.repository.UserRepository;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,7 @@ public class CompetitionRegistrationController {
     }
 
     @GetMapping
+    @Transactional(readOnly = true)
     public List<CompetitionRegistrationResponse> getAll(
             Authentication authentication
     ) {

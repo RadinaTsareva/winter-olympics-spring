@@ -11,6 +11,7 @@ import com.example.winter_olympics.repository.AthleteRepository;
 import com.example.winter_olympics.repository.CountryRepository;
 import com.example.winter_olympics.repository.UserRepository;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,7 @@ public class AthleteController {
     }
 
     @GetMapping
+    @Transactional(readOnly = true)
     public List<AthleteResponse> getAll() {
         return athleteRepository.findAll()
                 .stream()
@@ -44,6 +46,7 @@ public class AthleteController {
     }
 
     @GetMapping("/me")
+    @Transactional(readOnly = true)
     public AthleteResponse getMyProfile(Authentication authentication) {
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new NotFoundException("User not found"));
@@ -57,6 +60,7 @@ public class AthleteController {
     }
 
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     public AthleteResponse getById(@PathVariable Long id) {
         Athlete athlete = athleteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Athlete not found"));

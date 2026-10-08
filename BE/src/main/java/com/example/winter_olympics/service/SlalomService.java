@@ -5,12 +5,14 @@ import com.example.winter_olympics.dto.SlalomResultResponse;
 import com.example.winter_olympics.entity.SlalomResult;
 import com.example.winter_olympics.repository.SlalomResultRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class SlalomService {
 
     private final SlalomResultRepository resultRepository;

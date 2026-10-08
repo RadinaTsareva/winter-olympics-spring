@@ -8,6 +8,7 @@ import com.example.winter_olympics.entity.Medal;
 import com.example.winter_olympics.repository.AthleteRepository;
 import com.example.winter_olympics.repository.CompetitionRegistrationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class OlympicStatisticsService {
 
     private final AthleteRepository athleteRepository;

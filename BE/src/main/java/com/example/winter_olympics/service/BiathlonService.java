@@ -5,6 +5,7 @@ import com.example.winter_olympics.dto.BiathlonResultResponse;
 import com.example.winter_olympics.entity.BiathlonResult;
 import com.example.winter_olympics.repository.BiathlonResultRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Service
+@Transactional(readOnly = true)
 public class BiathlonService {
 
     private final BiathlonResultRepository resultRepository;
