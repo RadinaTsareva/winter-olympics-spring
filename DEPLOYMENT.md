@@ -66,9 +66,9 @@ Set the following backend environment variables in the deployment platform's sec
 
 | Variable | Purpose |
 | --- | --- |
-| `DATABASE_URL` | JDBC PostgreSQL URL, for example `jdbc:postgresql://<database-host>:5432/<database-name>` |
-| `DATABASE_USERNAME` | Database login name |
-| `DATABASE_PASSWORD` | Database password; keep it in the platform's secret store |
+| `SPRING_DATASOURCE_URL` | JDBC URL assembled from Railway PostgreSQL service variables; do not reference Railway's `postgres://` `DATABASE_URL` |
+| `SPRING_DATASOURCE_USERNAME` | Railway PostgreSQL service's `PGUSER` |
+| `SPRING_DATASOURCE_PASSWORD` | Railway PostgreSQL service's `PGPASSWORD`; keep it in Railway's variable reference/secret store |
 | `JWT_SECRET` | Random secret of at least 32 bytes; generate with `openssl rand -base64 48` |
 | `JWT_EXPIRATION_MS` | Token lifetime in milliseconds; defaults to 86400000 |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated explicit frontend origins, for example `<production-frontend-url>`; wildcard origins are rejected |
@@ -84,6 +84,26 @@ Do not replace these placeholders until the actual hosting URLs are known. Set t
 The `prod` Spring profile sets `spring.jpa.hibernate.ddl-auto=validate` and disables SQL logging. It does not create or migrate the schema. This repository currently has no versioned database migration tool, so provision/migrate the production schema through the chosen database change process before starting the production profile. Local configuration keeps Hibernate `update` for development convenience; avoid `create` and `create-drop` in any persistent environment.
 
 The backend fails startup when `JWT_SECRET` is missing/too short, or when the initial admin account needs creation but `ADMIN_INITIAL_PASSWORD` is missing. CORS must list exact trusted origins. Public pages need no JWT; protected API routes continue to require the existing bearer token.
+
+### Railway Postgres references
+
+On the Railway **backend service**, set `SPRING_PROFILES_ACTIVE=prod` and create these variables. The references below assume the PostgreSQL service is named `Postgres`; if its service name differs, replace only `Postgres` with the exact Railway service name. Railway documents these service-variable references as `${{SERVICE_NAME.VAR}}`.
+
+```text
+SPRING_DATASOURCE_URL=jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}
+SPRING_DATASOURCE_USERNAME=${{Postgres.PGUSER}}
+SPRING_DATASOURCE_PASSWORD=${{Postgres.PGPASSWORD}}
+```
+
+Set the remaining backend variables in Railway as follows:
+
+```text
+JWT_SECRET=<generate a random secret of at least 32 bytes; do not use a Railway Postgres variable>
+CORS_ALLOWED_ORIGINS=<the exact deployed frontend origin>
+SERVER_PORT=${{PORT}}
+```
+
+`JWT_EXPIRATION_MS` may be omitted to use the application default. `ADMIN_INITIAL_PASSWORD` is needed only when the initial admin account must be created. Do not set production `DATABASE_URL` or `DATABASE_USERNAME`/`DATABASE_PASSWORD`; the `prod` profile consumes the `SPRING_DATASOURCE_*` values above. In particular, Railway's `DATABASE_URL` is not a JDBC URL and must not be assigned to `SPRING_DATASOURCE_URL`.
 
 ## Demo data
 
