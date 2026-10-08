@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { login as loginRequest, type AuthCredentials, type AuthSession } from '@services/authApi';
 import { AUTH_STORAGE_KEY } from '@services/authStorage';
 
@@ -23,13 +23,23 @@ function readInitialSession(): AuthSession | null {
       return session as AuthSession;
     }
   } catch {
-    localStorage.removeItem(AUTH_STORAGE_KEY);
+    try {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+    } catch {
+      // Storage may be disabled by browser policy.
+    }
   }
   return null;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(readInitialSession);
+
+  useEffect(() => {
+    const handleUnauthorized = () => setSession(null);
+    window.addEventListener('winter-olympics:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('winter-olympics:unauthorized', handleUnauthorized);
+  }, []);
 
   const signIn = async (credentials: AuthCredentials) => {
     const authenticatedSession = await loginRequest(credentials);

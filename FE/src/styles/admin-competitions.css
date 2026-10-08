@@ -1,0 +1,58 @@
+.admin-competitions-page { max-width: 1440px; margin: 0 auto; }
+.admin-competitions-panel { max-width: 1320px; margin: 0 auto; padding: clamp(1rem, 3vw, 2rem); background: linear-gradient(145deg, rgba(18, 43, 71, 0.8), rgba(8, 24, 44, 0.9)); border: 1px solid rgba(130, 191, 231, 0.2); border-radius: var(--radius-xl); box-shadow: 0 18px 44px rgba(2, 12, 26, 0.2); }
+.admin-competitions-toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-lg); margin-bottom: var(--spacing-xl); }
+.admin-competitions-kicker { color: var(--color-primary-light); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; }
+.admin-competitions-toolbar h2 { display: flex; align-items: center; gap: 10px; margin: 5px 0 0; color: var(--color-text); font-size: 1.6rem; }
+.admin-competitions-toolbar h2 span { display: inline-flex; min-width: 1.7rem; height: 1.7rem; align-items: center; justify-content: center; border-radius: 999px; background: rgba(98, 181, 225, 0.15); color: var(--color-primary-light); font-size: 0.78rem; }
+.admin-competition-primary, .admin-competition-secondary, .admin-competition-danger { min-height: 2.7rem; border-radius: var(--radius-md); padding: 0.65rem 1rem; font: inherit; font-size: var(--font-size-small); font-weight: var(--font-weight-semibold); cursor: pointer; }
+.admin-competition-primary { border: 1px solid rgba(151, 220, 255, 0.4); background: linear-gradient(135deg, #3f9ed4, #227bb6); color: white; box-shadow: 0 7px 18px rgba(30, 122, 179, 0.2); }
+.admin-competition-primary:hover:not(:disabled) { filter: brightness(1.08); }
+.admin-competition-primary:disabled, .admin-competition-secondary:disabled, .admin-competition-danger:disabled { opacity: 0.55; cursor: not-allowed; }
+.admin-competition-secondary { border: 1px solid var(--color-border); background: transparent; color: var(--color-text); }
+.admin-competition-danger { border: 1px solid rgba(248, 113, 113, 0.45); background: linear-gradient(135deg, #cc484e, #a82c39); color: white; }
+.admin-competition-table-wrap { width: 100%; overflow-x: auto; border: 1px solid rgba(135, 191, 225, 0.16); border-radius: var(--radius-lg); scrollbar-color: rgba(103, 171, 211, 0.55) rgba(7, 22, 40, 0.55); }
+.admin-competition-table { width: 100%; min-width: 980px; border-collapse: collapse; text-align: left; }
+.admin-competition-table thead { background: rgba(109, 177, 217, 0.09); }
+.admin-competition-table th, .admin-competition-table td { padding: 15px 14px; border-bottom: 1px solid rgba(135, 191, 225, 0.12); color: var(--color-text-muted); font-size: var(--font-size-small); white-space: nowrap; }
+.admin-competition-table thead th { color: var(--color-primary-light); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+.admin-competition-table tbody tr:last-child th, .admin-competition-table tbody tr:last-child td { border-bottom: 0; }
+.admin-competition-table tbody tr:hover { background: rgba(111, 187, 231, 0.045); }
+.admin-competition-table tbody th { color: var(--color-text); font-weight: 600; }
+.admin-competition-type-tag { display: inline-flex; border: 1px solid rgba(132, 207, 244, 0.3); border-radius: 999px; padding: 5px 10px; background: rgba(88, 171, 221, 0.12); color: var(--color-primary-light); }
+.admin-competition-actions { display: flex; gap: 8px; }
+.admin-competition-actions button { border: 1px solid rgba(140, 201, 235, 0.26); border-radius: var(--radius-sm); padding: 6px 10px; background: rgba(97, 165, 205, 0.1); color: var(--color-primary-light); font: inherit; font-size: 0.78rem; cursor: pointer; }
+.admin-competition-actions button:hover { background: rgba(97, 165, 205, 0.2); }
+.admin-competition-actions .admin-competition-delete { border-color: rgba(246, 126, 135, 0.26); background: rgba(198, 66, 78, 0.08); color: #ffabb2; }
+.admin-competition-success, .admin-competition-error-banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 var(--spacing-md); border: 1px solid rgba(83, 199, 150, 0.28); border-radius: var(--radius-md); padding: 12px 14px; background: rgba(39, 137, 98, 0.12); color: #a9f0ce; font-size: var(--font-size-small); }
+.admin-competition-error-banner { border-color: rgba(239, 103, 119, 0.3); background: rgba(162, 42, 56, 0.12); color: #ffc1c7; }
+.admin-competition-error-banner button, .admin-competition-state button { flex: 0 0 auto; border: 1px solid rgba(141, 204, 238, 0.35); border-radius: var(--radius-md); padding: 7px 12px; background: rgba(93, 177, 224, 0.12); color: var(--color-primary-light); font: inherit; cursor: pointer; }
+.admin-competition-state { display: flex; min-height: 210px; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 1px solid rgba(135, 191, 225, 0.14); border-radius: var(--radius-lg); background: rgba(8, 23, 41, 0.4); color: var(--color-text-muted); text-align: center; }
+.admin-competition-state h3, .admin-competition-state p { margin: 0; }
+.admin-competition-state h3 { color: var(--color-text); }
+.admin-competition-state > span:not(.admin-competition-spinner) { color: var(--color-primary-light); font-size: 1.8rem; }
+.admin-competition-error-state { color: #ffc1c7; }
+.admin-competition-spinner { display: inline-block; width: 24px; height: 24px; border: 2px solid rgba(151, 208, 240, 0.25); border-top-color: var(--color-primary-light); border-radius: 50%; animation: admin-competition-spin 0.8s linear infinite; }
+.admin-competition-modal-backdrop { position: fixed; z-index: 300; inset: 0; display: flex; align-items: center; justify-content: center; overflow-y: auto; padding: var(--spacing-lg); background: rgba(4, 7, 22, 0.78); backdrop-filter: blur(8px); }
+.admin-competition-modal { width: min(100%, 560px); max-height: min(92vh, 820px); overflow-y: auto; border: 1px solid rgba(130, 191, 231, 0.26); border-radius: var(--radius-xl); padding: clamp(1.25rem, 4vw, 2rem); background: linear-gradient(145deg, var(--color-surface-light), var(--color-surface)); box-shadow: var(--shadow-xl); }
+.admin-competition-modal-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--spacing-md); margin-bottom: var(--spacing-xl); }
+.admin-competition-modal-heading h2 { margin: 5px 0 0; color: var(--color-text); font-size: 1.5rem; }
+.admin-competition-close { width: 2.3rem; height: 2.3rem; border: 1px solid var(--color-border); border-radius: 50%; background: transparent; color: var(--color-text-muted); font-size: 1.5rem; line-height: 1; cursor: pointer; }
+.admin-competition-field { display: grid; gap: 7px; margin-bottom: var(--spacing-md); color: var(--color-text-muted); font-size: var(--font-size-small); font-weight: 600; }
+.admin-competition-field input, .admin-competition-field select { width: 100%; min-height: 2.9rem; border: 1px solid rgba(140, 192, 222, 0.25); border-radius: var(--radius-md); padding: 0.7rem 0.85rem; outline: none; background: rgba(5, 19, 36, 0.72); color: var(--color-text); font: inherit; }
+.admin-competition-field input:focus, .admin-competition-field select:focus { border-color: var(--color-primary-light); box-shadow: 0 0 0 3px rgba(98, 183, 230, 0.12); }
+.admin-competition-field select option { background: #10243a; color: #f5f8fc; }
+.admin-competition-field small { color: var(--color-text-muted); font-weight: 400; }
+.admin-biathlon-form-fields { margin: var(--spacing-lg) 0; border: 1px solid rgba(123, 190, 226, 0.18); border-radius: var(--radius-lg); padding: var(--spacing-md); background: rgba(62, 133, 177, 0.07); }
+.admin-biathlon-form-label { display: flex; align-items: center; gap: 11px; margin-bottom: var(--spacing-md); color: var(--color-primary-light); }
+.admin-biathlon-form-label > span { display: inline-flex; width: 2.1rem; height: 2.1rem; align-items: center; justify-content: center; border: 1px solid rgba(132, 207, 244, 0.26); border-radius: 50%; }
+.admin-biathlon-form-label div { display: grid; gap: 3px; }
+.admin-biathlon-form-label small { color: var(--color-text-muted); font-size: 0.75rem; font-weight: 400; }
+.admin-competition-form-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: var(--spacing-sm); margin-top: var(--spacing-xl); }
+.admin-competition-confirm { width: min(100%, 500px); border-color: rgba(239, 68, 68, 0.42); }
+.admin-competition-confirm h2 { margin: 0 0 var(--spacing-sm); color: var(--color-text); font-size: 1.4rem; }
+.admin-competition-confirm p { color: var(--color-text-muted); font-size: var(--font-size-small); line-height: 1.65; }
+.admin-competition-warning { display: inline-flex; width: 2.7rem; height: 2.7rem; align-items: center; justify-content: center; margin-bottom: var(--spacing-sm); border: 1px solid rgba(239, 68, 68, 0.38); border-radius: 50%; background: rgba(239, 68, 68, 0.14); color: #fecaca; font-size: 1.4rem; font-weight: 700; }
+.admin-competition-primary:focus-visible, .admin-competition-secondary:focus-visible, .admin-competition-danger:focus-visible, .admin-competition-actions button:focus-visible, .admin-competition-field input:focus-visible, .admin-competition-field select:focus-visible { outline: 3px solid var(--color-primary-light); outline-offset: 2px; }
+@keyframes admin-competition-spin { to { transform: rotate(360deg); } }
+@media (max-width: 640px) { .admin-competitions-toolbar { align-items: flex-start; flex-direction: column; } .admin-competitions-toolbar > button { width: 100%; } .admin-competition-form-actions { flex-direction: column-reverse; } .admin-competition-form-actions button { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .admin-competition-spinner { animation: none; } }

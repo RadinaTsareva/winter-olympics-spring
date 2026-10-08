@@ -20,9 +20,9 @@ export async function login(credentials: AuthCredentials): Promise<AuthSession> 
   }, false);
 }
 
-export async function register(credentials: AuthCredentials, athleteId?: number): Promise<AuthSession> {
+export async function register(credentials: AuthCredentials): Promise<AuthSession> {
   return apiRequest<AuthSession>('/api/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ ...credentials, ...(athleteId === undefined ? {} : { athleteId }) }),
+    body: JSON.stringify(credentials),
   }, false);
 }

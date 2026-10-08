@@ -108,10 +108,11 @@ Register new athlete user account.
 ```json
 {
   "username": "athlete1",
-  "password": "password123",
-  "athleteId": null  // Optional: link to existing athlete profile
+  "password": "<user-provided password>"
 }
 ```
+
+Public registration creates an ATHLETE account. It does not accept an athlete ID; the authenticated user must not be able to claim another athlete profile.
 
 **Response (201 Created):**
 ```json
@@ -129,7 +130,7 @@ Authenticate existing user.
 ```json
 {
   "username": "athlete1",
-  "password": "password123"
+  "password": "<user-provided password>"
 }
 ```
 
@@ -142,12 +143,9 @@ Authenticate existing user.
 }
 ```
 
-### Default Admin User
+### Admin Account Initialization
 
-Created automatically on application startup:
-- **Username:** `admin`
-- **Password:** `admin123`
-- **Role:** `ADMIN`
+When the configured admin account needs to be created, the backend requires `ADMIN_INITIAL_PASSWORD` from its environment. Choose the username according to the configured initializer; do not place real credentials in source control or documentation. See [DEPLOYMENT.md](../DEPLOYMENT.md).
 
 ---
 
@@ -956,29 +954,7 @@ All exceptions are caught and formatted consistently via `GlobalExceptionHandler
 
 ## Configuration
 
-### Application Properties
-
-File: `src/main/resources/application.properties`
-
-```properties
-# Application
-spring.application.name=winter-olympics
-server.port=8080
-
-# Database
-spring.datasource.url=jdbc:postgresql://localhost:5434/winter_olympics
-spring.datasource.username=olympics
-spring.datasource.password=olympics
-
-# JPA/Hibernate
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
-
-# JWT (if not in application.properties, check for environment variables or dedicated config)
-# jwt.secret=<your-secret-key>
-# jwt.expiration=<milliseconds>
-```
+Configuration is supplied through backend environment variables, with local-only defaults documented in `BE/.env.example`. Production should activate the `prod` profile, provide a strong private `JWT_SECRET`, database variables, and `CORS_ALLOWED_ORIGINS`, and use schema validation. See [DEPLOYMENT.md](../DEPLOYMENT.md) for the current variable names and commands. Never place secrets in frontend `VITE_*` variables.
 
 ---
 
@@ -1009,4 +985,3 @@ spring.jpa.properties.hibernate.format_sql=true
 - Require ATHLETE or ADMIN role:
   - `/api/athletes/**`
   - `/api/registrations/**`
-

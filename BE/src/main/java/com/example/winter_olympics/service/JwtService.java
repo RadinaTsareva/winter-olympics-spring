@@ -4,29 +4,48 @@ import com.example.winter_olympics.entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Date;
 
 @Service
 public class JwtService {
 
-    private static final String SECRET =
-            "winter-olympics-secret-key-2026-must-be-long-enough";
+    private final SecretKey key;
+    private final long expirationMillis;
 
-    private final SecretKey key =
-            Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+    public JwtService(
+            @Value("${app.jwt.secret:}") String secret,
+            @Value("${app.jwt.expiration-ms:86400000}") long expirationMillis
+    ) {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException(
+                    "JWT_SECRET must be configured before the application can start"
+            );
+        }
+        byte[] secretBytes = secret.getBytes(StandardCharsets.UTF_8);
+        if (secretBytes.length < 32) {
+            throw new IllegalStateException(
+                    "JWT_SECRET must contain at least 32 bytes for HS256"
+            );
+        }
+        if (expirationMillis <= 0) {
+            throw new IllegalStateException("JWT_EXPIRATION_MS must be greater than zero");
+        }
+        this.key = Keys.hmacShaKeyFor(secretBytes);
+        this.expirationMillis = expirationMillis;
+    }
 
     public String generateToken(User user) {
 
         return Jwts.builder()
                 .subject(user.getUsername())
                 .claim("role", user.getRole().name())
-                .issuedAt(new Date())
-                .expiration(
-                        new Date(System.currentTimeMillis() + 86400000)
-                )
+                .issuedAt(Date.from(Instant.now()))
+                .expiration(Date.from(Instant.now().plusMillis(expirationMillis)))
                 .signWith(key)
                 .compact();
     }

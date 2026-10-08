@@ -1,4 +1,4 @@
-import { getStoredAuthToken } from './authStorage';
+import { AUTH_STORAGE_KEY, getStoredAuthToken } from './authStorage';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081').replace(/\/$/, '');
 
@@ -39,6 +39,14 @@ export async function apiRequest<T>(
       : typeof payload === 'string' && payload.trim()
         ? payload
         : `Request failed (HTTP ${response.status}).`;
+    if (includeAuth && response.status === 401) {
+      try {
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+      } catch {
+        // Keep the API error useful even when browser storage is unavailable.
+      }
+      window.dispatchEvent(new Event('winter-olympics:unauthorized'));
+    }
     throw new ApiError(message, response.status);
   }
 

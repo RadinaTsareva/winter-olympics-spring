@@ -2,11 +2,11 @@ package com.example.winter_olympics.controller;
 
 import com.example.winter_olympics.dto.AuthRequest;
 import com.example.winter_olympics.dto.AuthResponse;
-import com.example.winter_olympics.entity.Athlete;
 import com.example.winter_olympics.entity.Role;
 import com.example.winter_olympics.entity.User;
-import com.example.winter_olympics.repository.AthleteRepository;
 import com.example.winter_olympics.repository.UserRepository;
+import com.example.winter_olympics.exception.BadRequestException;
+import com.example.winter_olympics.exception.UnauthorizedException;
 import com.example.winter_olympics.service.JwtService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,19 +20,16 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final AthleteRepository athleteRepository;
 
     public AuthController(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            JwtService jwtService,
-            AthleteRepository athleteRepository
+            JwtService jwtService
 
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
-        this.athleteRepository = athleteRepository;
     }
 
     @PostMapping("/register")
@@ -40,14 +37,13 @@ public class AuthController {
     public AuthResponse register(@Valid @RequestBody AuthRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new BadRequestException("Username already exists");
         }
 
-        Athlete athlete = null;
-
         if (request.getAthleteId() != null) {
-            athlete = athleteRepository.findById(request.getAthleteId())
-                    .orElseThrow(() -> new RuntimeException("Athlete not found"));
+            throw new BadRequestException(
+                    "Athlete profiles can only be associated through a trusted administrator workflow"
+            );
         }
 
         User user = new User(
@@ -55,8 +51,6 @@ public class AuthController {
                 passwordEncoder.encode(request.getPassword()),
                 Role.ATHLETE
         );
-
-        user.setAthlete(athlete);
 
         User savedUser = userRepository.save(user);
 
@@ -76,14 +70,14 @@ public class AuthController {
 
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() ->
-                        new RuntimeException("Invalid username or password")
+                        new UnauthorizedException("Invalid username or password")
                 );
 
         if (!passwordEncoder.matches(
                 request.getPassword(),
                 user.getPassword()
         )) {
-            throw new RuntimeException("Invalid username or password");
+            throw new UnauthorizedException("Invalid username or password");
         }
 
         String token = jwtService.generateToken(user);

@@ -6,6 +6,7 @@ import com.example.winter_olympics.entity.Athlete;
 import com.example.winter_olympics.entity.Country;
 import com.example.winter_olympics.entity.User;
 import com.example.winter_olympics.exception.ForbiddenException;
+import com.example.winter_olympics.exception.NotFoundException;
 import com.example.winter_olympics.repository.AthleteRepository;
 import com.example.winter_olympics.repository.CountryRepository;
 import com.example.winter_olympics.repository.UserRepository;
@@ -14,7 +15,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
 import java.util.List;
 
 @RestController
@@ -46,11 +46,11 @@ public class AthleteController {
     @GetMapping("/me")
     public AthleteResponse getMyProfile(Authentication authentication) {
         User user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         Athlete athlete = user.getAthlete();
         if (athlete == null) {
-            throw new RuntimeException("No athlete profile is associated with this user");
+            throw new NotFoundException("No athlete profile is associated with this user");
         }
 
         return toResponse(athlete);
@@ -59,7 +59,7 @@ public class AthleteController {
     @GetMapping("/{id}")
     public AthleteResponse getById(@PathVariable Long id) {
         Athlete athlete = athleteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Athlete not found"));
+                .orElseThrow(() -> new NotFoundException("Athlete not found"));
 
         return toResponse(athlete);
     }
@@ -69,7 +69,7 @@ public class AthleteController {
     public Athlete createAthlete(@Valid @RequestBody AthleteRequest request) {
 
         Country country = countryRepository.findById(request.getCountryId())
-                .orElseThrow(() -> new RuntimeException("Country not found"));
+                .orElseThrow(() -> new NotFoundException("Country not found"));
 
         Athlete athlete = new Athlete(
                 request.getName(),
@@ -90,10 +90,10 @@ public class AthleteController {
         checkOwnership(id, authentication);
 
         Athlete athlete = athleteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Athlete not found"));
+                .orElseThrow(() -> new NotFoundException("Athlete not found"));
 
         Country country = countryRepository.findById(request.getCountryId())
-                .orElseThrow(() -> new RuntimeException("Country not found"));
+                .orElseThrow(() -> new NotFoundException("Country not found"));
 
         athlete.setName(request.getName());
         athlete.setCountry(country);
@@ -107,6 +107,8 @@ public class AthleteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAthlete(@PathVariable Long id, Authentication authentication) {
         checkOwnership(id, authentication);
+        athleteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Athlete not found"));
         athleteRepository.deleteById(id);
     }
 
@@ -118,7 +120,7 @@ public class AthleteController {
         }
 
         User user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (user.getAthlete() == null ||
                 !user.getAthlete().getId().equals(athleteId)) {

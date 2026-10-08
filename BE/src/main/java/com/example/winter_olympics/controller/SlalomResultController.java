@@ -7,6 +7,8 @@ import com.example.winter_olympics.entity.SlalomResult;
 import com.example.winter_olympics.repository.CompetitionRegistrationRepository;
 import com.example.winter_olympics.repository.SlalomResultRepository;
 import com.example.winter_olympics.service.SlalomService;
+import com.example.winter_olympics.exception.BadRequestException;
+import com.example.winter_olympics.exception.NotFoundException;
 import com.example.winter_olympics.dto.SlalomRankingResponse;
 import com.example.winter_olympics.dto.SlalomResultResponse;
 import jakarta.validation.Valid;
@@ -41,10 +43,10 @@ public class SlalomResultController {
         CompetitionRegistration registration =
                 registrationRepository.findById(request.getRegistrationId())
                         .orElseThrow(() ->
-                                new RuntimeException("Registration not found"));
+                                new NotFoundException("Registration not found"));
 
         if (registration.getCompetition().getType() != CompetitionType.SKI_SLALOM) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Registration is not for a ski slalom competition"
             );
         }
@@ -77,10 +79,10 @@ public class SlalomResultController {
         CompetitionRegistration registration =
                 registrationRepository.findById(request.getRegistrationId())
                         .orElseThrow(() ->
-                                new RuntimeException("Registration not found"));
+                                new NotFoundException("Registration not found"));
 
         if (registration.getCompetition().getType() != CompetitionType.SKI_SLALOM) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Registration is not for a ski slalom competition"
             );
         }
@@ -91,10 +93,10 @@ public class SlalomResultController {
                         .equals(registration.getId()))
                 .findFirst()
                 .orElseThrow(() ->
-                        new RuntimeException("First run result not found"));
+                        new NotFoundException("First run result not found"));
 
         if (!result.isFirstRunFinished()) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Athlete did not finish the first run"
             );
         }
@@ -111,7 +113,7 @@ public class SlalomResultController {
                 );
 
         if (!qualified) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Athlete is not qualified for the second run"
             );
         }

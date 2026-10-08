@@ -10,6 +10,8 @@ import com.example.winter_olympics.entity.CompetitionType;
 import com.example.winter_olympics.repository.BiathlonResultRepository;
 import com.example.winter_olympics.repository.CompetitionRegistrationRepository;
 import com.example.winter_olympics.service.BiathlonService;
+import com.example.winter_olympics.exception.BadRequestException;
+import com.example.winter_olympics.exception.NotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -42,10 +44,10 @@ public class BiathlonResultController {
         CompetitionRegistration registration =
                 registrationRepository.findById(request.getRegistrationId())
                         .orElseThrow(() ->
-                                new RuntimeException("Registration not found"));
+                                new NotFoundException("Registration not found"));
 
         if (registration.getCompetition().getType() != CompetitionType.BIATHLON) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Registration is not for a biathlon competition"
             );
         }
@@ -55,7 +57,7 @@ public class BiathlonResultController {
         if (competition.getNumberOfLaps() == null ||
                 competition.getShootingAfterLaps() == null) {
 
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Biathlon competition is missing lap or shooting settings"
             );
         }

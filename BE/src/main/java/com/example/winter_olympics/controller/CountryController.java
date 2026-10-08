@@ -2,6 +2,7 @@ package com.example.winter_olympics.controller;
 
 import com.example.winter_olympics.entity.Country;
 import com.example.winter_olympics.repository.CountryRepository;
+import com.example.winter_olympics.exception.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class CountryController {
     @GetMapping("/{id}")
     public Country getCountryById(@PathVariable Long id) {
         return countryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Country not found"));
+                .orElseThrow(() -> new NotFoundException("Country not found"));
     }
 
     @PostMapping
@@ -38,7 +39,7 @@ public class CountryController {
             @RequestBody Country updatedCountry
     ) {
         Country country = countryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Country not found"));
+                .orElseThrow(() -> new NotFoundException("Country not found"));
 
         country.setName(updatedCountry.getName());
 
@@ -47,6 +48,8 @@ public class CountryController {
 
     @DeleteMapping("/{id}")
     public void deleteCountry(@PathVariable Long id) {
+        countryRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Country not found"));
         countryRepository.deleteById(id);
     }
 }

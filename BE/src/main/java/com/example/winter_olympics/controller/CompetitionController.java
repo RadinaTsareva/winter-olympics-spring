@@ -3,6 +3,8 @@ package com.example.winter_olympics.controller;
 import com.example.winter_olympics.dto.CompetitionRequest;
 import com.example.winter_olympics.entity.Competition;
 import com.example.winter_olympics.repository.CompetitionRepository;
+import com.example.winter_olympics.exception.BadRequestException;
+import com.example.winter_olympics.exception.NotFoundException;
 import com.example.winter_olympics.entity.CompetitionType;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,7 @@ public class CompetitionController {
     @GetMapping("/{id}")
     public Competition getCompetitionById(@PathVariable Long id) {
         return competitionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Competition not found"));
+                .orElseThrow(() -> new NotFoundException("Competition not found"));
     }
 
     @PostMapping
@@ -58,7 +60,7 @@ public class CompetitionController {
         validateCompetitionSettings(request);
 
         Competition competition = competitionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Competition not found"));
+                .orElseThrow(() -> new NotFoundException("Competition not found"));
 
         competition.setName(request.getName());
         competition.setType(request.getType());
@@ -73,6 +75,8 @@ public class CompetitionController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompetition(@PathVariable Long id) {
+        competitionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Competition not found"));
         competitionRepository.deleteById(id);
     }
 
@@ -81,19 +85,19 @@ public class CompetitionController {
         if (request.getType() == CompetitionType.BIATHLON) {
 
             if (request.getNumberOfLaps() == null) {
-                throw new RuntimeException(
+                throw new BadRequestException(
                         "Number of laps is required for biathlon"
                 );
             }
 
             if (request.getShootingAfterLaps() == null) {
-                throw new RuntimeException(
+                throw new BadRequestException(
                         "Shooting lap is required for biathlon"
                 );
             }
 
             if (request.getShootingAfterLaps() > request.getNumberOfLaps()) {
-                throw new RuntimeException(
+                throw new BadRequestException(
                         "Shooting lap cannot be greater than number of laps"
                 );
             }
@@ -103,7 +107,7 @@ public class CompetitionController {
             if (request.getNumberOfLaps() != null ||
                     request.getShootingAfterLaps() != null) {
 
-                throw new RuntimeException(
+                throw new BadRequestException(
                         "Lap and shooting settings are only allowed for biathlon"
                 );
             }

@@ -6,6 +6,8 @@ import com.example.winter_olympics.entity.Athlete;
 import com.example.winter_olympics.entity.Competition;
 import com.example.winter_olympics.entity.CompetitionRegistration;
 import com.example.winter_olympics.exception.ForbiddenException;
+import com.example.winter_olympics.exception.BadRequestException;
+import com.example.winter_olympics.exception.NotFoundException;
 import com.example.winter_olympics.repository.AthleteRepository;
 import com.example.winter_olympics.repository.CompetitionRegistrationRepository;
 import com.example.winter_olympics.repository.CompetitionRepository;
@@ -47,7 +49,7 @@ public class CompetitionRegistrationController {
             Authentication authentication
     ) {
         User user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         List<CompetitionRegistration> registrations;
 
@@ -78,13 +80,13 @@ public class CompetitionRegistrationController {
             Authentication authentication
     ) {
         User user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         Athlete athlete = athleteRepository.findById(request.getAthleteId())
-                .orElseThrow(() -> new RuntimeException("Athlete not found"));
+                .orElseThrow(() -> new NotFoundException("Athlete not found"));
 
         Competition competition = competitionRepository.findById(request.getCompetitionId())
-                .orElseThrow(() -> new RuntimeException("Competition not found"));
+                .orElseThrow(() -> new NotFoundException("Competition not found"));
 
         boolean isAdmin = user.getRole() == Role.ADMIN;
 
@@ -98,7 +100,7 @@ public class CompetitionRegistrationController {
         }
 
         if (athlete.getGender() != competition.getGender()) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Athlete gender does not match competition gender"
             );
         }
@@ -109,7 +111,7 @@ public class CompetitionRegistrationController {
         ).getYears();
 
         if (age < competition.getMinimumAge()) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Athlete does not meet the minimum age requirement"
             );
         }
@@ -120,7 +122,7 @@ public class CompetitionRegistrationController {
                         competition.getId()
                 )) {
 
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Athlete is already registered for this competition"
             );
         }
@@ -143,7 +145,7 @@ public class CompetitionRegistrationController {
         CompetitionRegistration registration =
                 registrationRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException("Registration not found"));
+                                new NotFoundException("Registration not found"));
 
         checkOwnership(registration, authentication);
 
@@ -167,7 +169,7 @@ public class CompetitionRegistrationController {
             Authentication authentication
     ) {
         User user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (user.getRole() == Role.ADMIN) {
             return;

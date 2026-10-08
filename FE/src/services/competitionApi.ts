@@ -19,6 +19,26 @@ export async function getCompetitions(): Promise<Competition[]> {
   return apiRequest<Competition[]>('/api/competitions');
 }
 
+export type CompetitionRequest = Omit<Competition, 'id'>;
+
+export function createCompetition(competition: CompetitionRequest): Promise<Competition> {
+  return apiRequest<Competition>('/api/competitions', {
+    method: 'POST',
+    body: JSON.stringify(competition),
+  });
+}
+
+export function updateCompetition(id: number, competition: CompetitionRequest): Promise<Competition> {
+  return apiRequest<Competition>(`/api/competitions/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(competition),
+  });
+}
+
+export function deleteCompetition(id: number): Promise<void> {
+  return apiRequest<void>(`/api/competitions/${id}`, { method: 'DELETE' });
+}
+
 export async function getCompetition(id: number): Promise<Competition> {
   try {
     return await apiRequest<Competition>(`/api/competitions/${id}`);

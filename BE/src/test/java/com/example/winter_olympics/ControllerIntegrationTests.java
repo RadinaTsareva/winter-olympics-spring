@@ -1,6 +1,7 @@
 package com.example.winter_olympics;
 
 import com.example.winter_olympics.controller.AthleteController;
+import com.example.winter_olympics.controller.AdminTestDataController;
 import com.example.winter_olympics.controller.AuthController;
 import com.example.winter_olympics.controller.BiathlonResultController;
 import com.example.winter_olympics.controller.CompetitionController;
@@ -20,6 +21,7 @@ import com.example.winter_olympics.dto.RegistrationRequest;
 import com.example.winter_olympics.dto.SlalomRankingResponse;
 import com.example.winter_olympics.dto.SlalomResultRequest;
 import com.example.winter_olympics.dto.SlalomResultResponse;
+import com.example.winter_olympics.dto.TestDataResponse;
 import com.example.winter_olympics.entity.Athlete;
 import com.example.winter_olympics.entity.BiathlonResult;
 import com.example.winter_olympics.entity.Competition;
@@ -41,6 +43,7 @@ import com.example.winter_olympics.service.BiathlonService;
 import com.example.winter_olympics.service.JwtService;
 import com.example.winter_olympics.service.OlympicStatisticsService;
 import com.example.winter_olympics.service.SlalomService;
+import com.example.winter_olympics.service.TestDataService;
 import com.example.winter_olympics.repository.SlalomResultRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -76,6 +79,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {
+        AdminTestDataController.class,
         AuthController.class,
         AthleteController.class,
         CompetitionController.class,
@@ -130,6 +134,25 @@ class ControllerIntegrationTests {
     @MockitoBean
     private OlympicStatisticsService statisticsService;
 
+    @MockitoBean
+    private TestDataService testDataService;
+
+    @Test
+    void createAdminTestDataReturnsCreatedAndReusedCounts() throws Exception {
+        when(testDataService.createDemoData()).thenReturn(new TestDataResponse(
+                "Test data created successfully; matching demo records were reused",
+                4, 0, 8, 0, 4, 0, 16, 0, 8, 0, 8, 0
+        ));
+
+        mockMvc.perform(post("/api/admin/test-data"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.countriesCreated").value(4))
+                .andExpect(jsonPath("$.athletesCreated").value(8))
+                .andExpect(jsonPath("$.registrationsCreated").value(16))
+                .andExpect(jsonPath("$.slalomResultsCreated").value(8))
+                .andExpect(jsonPath("$.biathlonResultsCreated").value(8));
+    }
+
     @Test
     void registerReturnsTokenAndUserInfo() throws Exception {
         when(userRepository.existsByUsername("newuser")).thenReturn(false);
@@ -164,6 +187,18 @@ class ControllerIntegrationTests {
     }
 
     @Test
+    void publicRegistrationCannotClaimAnExistingAthlete() throws Exception {
+        when(userRepository.existsByUsername("claimant")).thenReturn(false);
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(new AuthRequest("claimant", "secret", 5L))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(
+                        "Athlete profiles can only be associated through a trusted administrator workflow"));
+    }
+
+    @Test
     void loginReturnsTokenAndRole() throws Exception {
         User user = sampleUser(1L, "admin", "encoded-secret", Role.ADMIN, null);
         when(userRepository.findByUsername("admin")).thenReturn(Optional.of(user));
@@ -177,6 +212,17 @@ class ControllerIntegrationTests {
                 .andExpect(jsonPath("$.token").value("login-token"))
                 .andExpect(jsonPath("$.username").value("admin"))
                 .andExpect(jsonPath("$.role").value("ADMIN"));
+    }
+
+    @Test
+    void loginRejectsInvalidCredentialsAsUnauthorized() throws Exception {
+        when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(new AuthRequest("unknown", "wrong", null))))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("Invalid username or password"));
     }
 
     @Test
@@ -230,6 +276,8 @@ class ControllerIntegrationTests {
 
     @Test
     void deleteCountryReturnsNoContent() throws Exception {
+        when(countryRepository.findById(1L)).thenReturn(Optional.of(country(1L, "Norway")));
+
         mockMvc.perform(delete("/api/countries/1"))
                 .andExpect(status().isOk());
 
@@ -332,6 +380,9 @@ class ControllerIntegrationTests {
 
     @Test
     void deleteAthleteAsAdminSucceeds() throws Exception {
+        when(athleteRepository.findById(1L)).thenReturn(Optional.of(
+                athlete(1L, "Athlete", country(1L, "Norway"), Gender.MALE, LocalDate.of(2000, 1, 1))));
+
         mockMvc.perform(delete("/api/athletes/1")
                         .with(authentication("admin", "ROLE_ADMIN")))
                 .andExpect(status().isNoContent());
@@ -361,6 +412,15 @@ class ControllerIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Biathlon Final"))
                 .andExpect(jsonPath("$.type").value("BIATHLON"));
+    }
+
+    @Test
+    void getMissingCompetitionReturnsNotFound() throws Exception {
+        when(competitionRepository.findById(99L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/competitions/99"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Competition not found"));
     }
 
     @Test
@@ -428,6 +488,9 @@ class ControllerIntegrationTests {
 
     @Test
     void deleteCompetitionReturnsNoContent() throws Exception {
+        when(competitionRepository.findById(1L)).thenReturn(Optional.of(
+                competition(1L, "Competition", CompetitionType.SKI_SLALOM, Gender.MALE, 18, null, null)));
+
         mockMvc.perform(delete("/api/competitions/1"))
                 .andExpect(status().isNoContent());
 
@@ -886,9 +949,3 @@ class ControllerIntegrationTests {
         };
     }
 }
-
-
-
-
-
-
