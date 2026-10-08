@@ -1,5 +1,6 @@
-import { createBrowserRouter, RouteObject } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouteObject } from 'react-router-dom';
 import { AppLayout } from '@layouts/AppLayout';
+import { RedirectAuthenticated, RequireRole } from '@components/RouteGuards';
 
 // Public pages
 import { Home } from '@pages/Home';
@@ -76,9 +77,9 @@ const publicRoutes: RouteObject[] = [
   {
     path: '/login',
     element: (
-      <AppLayout>
-        <Login />
-      </AppLayout>
+      <RedirectAuthenticated>
+        <AppLayout><Login /></AppLayout>
+      </RedirectAuthenticated>
     ),
   },
   {
@@ -95,25 +96,19 @@ const athleteRoutes: RouteObject[] = [
   {
     path: '/athlete',
     element: (
-      <AppLayout>
-        <AthleteDashboard />
-      </AppLayout>
+      <RequireRole role="ATHLETE"><AppLayout><AthleteDashboard /></AppLayout></RequireRole>
     ),
   },
   {
     path: '/athlete/profile',
     element: (
-      <AppLayout>
-        <AthleteProfile />
-      </AppLayout>
+      <RequireRole role="ATHLETE"><AppLayout><AthleteProfile /></AppLayout></RequireRole>
     ),
   },
   {
     path: '/athlete/competitions',
     element: (
-      <AppLayout>
-        <AthleteCompetitions />
-      </AppLayout>
+      <RequireRole role="ATHLETE"><AppLayout><AthleteCompetitions /></AppLayout></RequireRole>
     ),
   },
 ];
@@ -122,54 +117,52 @@ const adminRoutes: RouteObject[] = [
   {
     path: '/admin',
     element: (
-      <AppLayout>
-        <AdminDashboard />
-      </AppLayout>
+      <RequireRole role="ADMIN"><AppLayout><AdminDashboard /></AppLayout></RequireRole>
     ),
   },
   {
     path: '/admin/athletes',
     element: (
-      <AppLayout>
-        <AdminAthletes />
-      </AppLayout>
+      <RequireRole role="ADMIN"><AppLayout><AdminAthletes /></AppLayout></RequireRole>
     ),
   },
   {
     path: '/admin/competitions',
     element: (
-      <AppLayout>
-        <AdminCompetitions />
-      </AppLayout>
+      <RequireRole role="ADMIN"><AppLayout><AdminCompetitions /></AppLayout></RequireRole>
     ),
   },
   {
     path: '/admin/registrations',
     element: (
-      <AppLayout>
-        <AdminRegistrations />
-      </AppLayout>
+      <RequireRole role="ADMIN"><AppLayout><AdminRegistrations /></AppLayout></RequireRole>
     ),
   },
   {
     path: '/admin/slalom-results',
     element: (
-      <AppLayout>
-        <AdminSlalomResults />
-      </AppLayout>
+      <RequireRole role="ADMIN"><AppLayout><AdminSlalomResults /></AppLayout></RequireRole>
     ),
   },
   {
     path: '/admin/biathlon-results',
     element: (
-      <AppLayout>
-        <AdminBiathlonResults />
-      </AppLayout>
+      <RequireRole role="ADMIN"><AppLayout><AdminBiathlonResults /></AppLayout></RequireRole>
     ),
   },
 ];
 
-const routes: RouteObject[] = [...publicRoutes, ...athleteRoutes, ...adminRoutes];
+const protectedFallbackRoutes: RouteObject[] = [
+  {
+    path: '/athlete/*',
+    element: <RequireRole role="ATHLETE"><Navigate to="/athlete" replace /></RequireRole>,
+  },
+  {
+    path: '/admin/*',
+    element: <RequireRole role="ADMIN"><Navigate to="/admin" replace /></RequireRole>,
+  },
+];
+
+const routes: RouteObject[] = [...publicRoutes, ...athleteRoutes, ...adminRoutes, ...protectedFallbackRoutes];
 
 export const router = createBrowserRouter(routes);
-

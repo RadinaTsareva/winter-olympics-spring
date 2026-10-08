@@ -43,6 +43,19 @@ public class AthleteController {
                 .toList();
     }
 
+    @GetMapping("/me")
+    public AthleteResponse getMyProfile(Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Athlete athlete = user.getAthlete();
+        if (athlete == null) {
+            throw new RuntimeException("No athlete profile is associated with this user");
+        }
+
+        return toResponse(athlete);
+    }
+
     @GetMapping("/{id}")
     public AthleteResponse getById(@PathVariable Long id) {
         Athlete athlete = athleteRepository.findById(id)

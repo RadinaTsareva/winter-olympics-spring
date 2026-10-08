@@ -1,0 +1,65 @@
+.athlete-competitions-content { display: flex; max-width: 1240px; flex-direction: column; gap: var(--spacing-2xl); margin: 0 auto; }
+.athlete-competition-section {
+  padding: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
+  background: linear-gradient(145deg, rgba(37, 45, 74, 0.88), rgba(26, 31, 58, 0.95));
+  border: 1px solid rgba(77, 217, 255, 0.18);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  backdrop-filter: blur(14px);
+}
+.athlete-competition-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--spacing-md); margin-bottom: var(--spacing-lg); }
+.athlete-competition-eyebrow { margin-bottom: var(--spacing-xs); color: var(--color-primary-light); font-size: var(--font-size-caption); font-weight: var(--font-weight-semibold); letter-spacing: 0.12em; }
+.athlete-competition-section-heading h2 { margin: 0; color: var(--color-text); font-size: clamp(1.35rem, 3vw, 1.8rem); }
+.athlete-competition-count { color: var(--color-text-muted); font-size: var(--font-size-small); white-space: nowrap; }
+.athlete-competition-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 285px), 1fr)); gap: var(--spacing-lg); }
+.athlete-competition-card { display: flex; min-width: 0; flex-direction: column; padding: var(--spacing-lg); background: linear-gradient(145deg, rgba(10, 14, 39, 0.55), rgba(26, 31, 58, 0.7)); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base); }
+.athlete-competition-card:hover { transform: translateY(-3px); border-color: rgba(77, 217, 255, 0.45); box-shadow: var(--shadow-lg); }
+.athlete-competition-card-topline { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-sm); }
+.athlete-competition-card h3 { margin: var(--spacing-lg) 0 var(--spacing-xs); color: var(--color-text); font-size: 1.25rem; line-height: 1.35; overflow-wrap: anywhere; }
+.athlete-competition-meta { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-small); }
+.competition-min-age { color: var(--color-text-muted); font-size: var(--font-size-caption); text-align: right; }
+.registration-status { display: inline-flex; align-items: center; gap: var(--spacing-xs); color: #a7f3d0; font-size: var(--font-size-caption); font-weight: var(--font-weight-semibold); }
+.registration-status span { color: var(--color-success); font-size: 0.55rem; }
+.athlete-biathlon-details { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin: auto 0 var(--spacing-lg); padding-top: var(--spacing-lg); }
+.athlete-biathlon-details div { display: flex; flex-direction: column; gap: var(--spacing-xs); }
+.athlete-biathlon-details span { color: var(--color-text-muted); font-size: var(--font-size-caption); }
+.athlete-biathlon-details strong { color: var(--color-text); font-size: var(--font-size-small); }
+.register-button, .unregister-button { display: inline-flex; min-height: 2.8rem; align-items: center; justify-content: center; gap: var(--spacing-sm); margin-top: auto; padding: 0.65rem 1rem; border-radius: var(--radius-md); font: inherit; font-size: var(--font-size-small); font-weight: var(--font-weight-semibold); cursor: pointer; transition: transform var(--transition-base), background var(--transition-base), border-color var(--transition-base), opacity var(--transition-base); }
+.register-button { color: var(--color-background); background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light)); border: 1px solid transparent; }
+.register-button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 180, 255, 0.2); }
+.unregister-button { margin-top: var(--spacing-lg); color: #fecaca; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); }
+.unregister-button:hover:not(:disabled) { background: rgba(239, 68, 68, 0.17); border-color: rgba(239, 68, 68, 0.55); }
+.register-button:disabled, .unregister-button:disabled { opacity: 0.6; cursor: wait; }
+.register-button:focus-visible, .unregister-button:focus-visible, .athlete-dialog-cancel:focus-visible, .athlete-dialog-confirm:focus-visible { outline: 3px solid var(--color-primary-light); outline-offset: 3px; }
+.athlete-competition-empty, .athlete-competitions-state { padding: var(--spacing-2xl) var(--spacing-lg); color: var(--color-text-muted); text-align: center; background: rgba(10, 14, 39, 0.42); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+.athlete-competition-empty > span { display: block; margin-bottom: var(--spacing-sm); color: var(--color-primary-light); font-size: 1.8rem; }
+.athlete-competition-empty h3, .athlete-competitions-state h2 { margin: 0 0 var(--spacing-sm); color: var(--color-text); font-size: 1.2rem; }
+.athlete-competition-empty p, .athlete-competitions-state p { margin: 0; }
+.athlete-competitions-state { max-width: 800px; margin: 0 auto; padding: var(--spacing-3xl) var(--spacing-lg); }
+.athlete-competitions-state .competition-spinner { margin-bottom: var(--spacing-md); }
+.athlete-competitions-error { border-color: rgba(239, 68, 68, 0.45); }
+.athlete-competitions-success, .athlete-competitions-error-message { padding: 0.8rem 1rem; border-radius: var(--radius-md); font-size: var(--font-size-small); }
+.athlete-competitions-success { color: #a7f3d0; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.35); }
+.athlete-competitions-error-message { color: #fecaca; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); }
+
+.athlete-registration-dialog-backdrop { position: fixed; z-index: 300; inset: 0; display: flex; align-items: center; justify-content: center; padding: var(--spacing-lg); background: rgba(4, 7, 22, 0.78); backdrop-filter: blur(8px); }
+.athlete-registration-dialog { width: min(100%, 480px); padding: var(--spacing-2xl); background: linear-gradient(145deg, var(--color-surface-light), var(--color-surface)); border: 1px solid rgba(245, 158, 11, 0.42); border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); }
+.athlete-registration-dialog-icon { display: inline-flex; width: 2.7rem; height: 2.7rem; align-items: center; justify-content: center; margin-bottom: var(--spacing-md); color: #fcd34d; background: rgba(245, 158, 11, 0.13); border: 1px solid rgba(245, 158, 11, 0.32); border-radius: 50%; font-size: 1.3rem; font-weight: var(--font-weight-bold); }
+.athlete-registration-dialog h2 { margin: 0 0 var(--spacing-sm); color: var(--color-text); font-size: 1.4rem; }
+.athlete-registration-dialog p { margin-bottom: var(--spacing-lg); font-size: var(--font-size-small); }
+.athlete-registration-dialog p strong { color: var(--color-text); }
+.unregister-progress { color: var(--color-primary-light) !important; }
+.athlete-registration-dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: var(--spacing-sm); }
+.athlete-dialog-cancel, .athlete-dialog-confirm { min-height: 2.7rem; padding: 0.6rem 0.95rem; border-radius: var(--radius-md); font: inherit; font-size: var(--font-size-small); font-weight: var(--font-weight-semibold); cursor: pointer; }
+.athlete-dialog-cancel { color: var(--color-text); background: transparent; border: 1px solid var(--color-border); }
+.athlete-dialog-confirm { color: var(--color-background); background: var(--color-warning); border: 1px solid transparent; }
+.athlete-dialog-cancel:disabled, .athlete-dialog-confirm:disabled { opacity: 0.6; cursor: wait; }
+
+@media (max-width: 640px) {
+  .athlete-competition-section { padding: var(--spacing-md); }
+  .athlete-competition-section-heading { align-items: flex-start; flex-direction: column; }
+  .athlete-competition-card { padding: var(--spacing-md); }
+  .athlete-registration-dialog { padding: var(--spacing-lg); }
+  .athlete-registration-dialog-actions { flex-direction: column-reverse; }
+  .athlete-dialog-cancel, .athlete-dialog-confirm { width: 100%; }
+}

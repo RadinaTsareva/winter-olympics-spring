@@ -1,0 +1,102 @@
+.rankings-panel {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
+  background: linear-gradient(145deg, rgba(37, 45, 74, 0.88), rgba(26, 31, 58, 0.94));
+  border: 1px solid rgba(77, 217, 255, 0.18);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  backdrop-filter: blur(14px);
+}
+
+.rankings-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.rankings-eyebrow {
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-primary-light);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.12em;
+}
+
+.rankings-toolbar h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+}
+
+.competition-select-wrap { display: flex; min-width: min(100%, 280px); flex-direction: column; gap: var(--spacing-xs); }
+.competition-select-wrap > span { color: var(--color-text-muted); font-size: var(--font-size-caption); font-weight: var(--font-weight-semibold); }
+.competition-select-wrap select {
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.65rem 2.3rem 0.65rem 0.85rem;
+  color: var(--color-text);
+  font: inherit;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.competition-select-wrap select:focus-visible { outline: 3px solid rgba(77, 217, 255, 0.55); outline-offset: 2px; }
+.competition-select-wrap option { color: var(--color-text); background: var(--color-surface); }
+
+.ranking-caption { display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-md); color: var(--color-text-muted); font-size: var(--font-size-small); }
+.rank-table-scroll { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+.rank-table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
+.rank-table th {
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--color-text-muted);
+  background: rgba(10, 14, 39, 0.72);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.rank-table td { padding: var(--spacing-md) var(--spacing-lg); color: var(--color-text-muted); border-top: 1px solid rgba(42, 49, 80, 0.7); font-size: var(--font-size-small); }
+.rank-row { transition: background var(--transition-fast); }
+.rank-row:hover { background: rgba(77, 217, 255, 0.06); }
+.rank-row.rank-place-1 { background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.025)); }
+.rank-row.rank-place-2 { background: linear-gradient(90deg, rgba(203, 213, 225, 0.12), rgba(203, 213, 225, 0.02)); }
+.rank-row.rank-place-3 { background: linear-gradient(90deg, rgba(180, 83, 9, 0.15), rgba(180, 83, 9, 0.025)); }
+.rank-position {
+  display: inline-flex;
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  background: rgba(10, 14, 39, 0.58);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  font-weight: var(--font-weight-bold);
+}
+.rank-place-1 .rank-position { border-color: rgba(245, 158, 11, 0.65); box-shadow: 0 0 16px rgba(245, 158, 11, 0.18); }
+.rank-place-2 .rank-position { border-color: rgba(203, 213, 225, 0.6); }
+.rank-place-3 .rank-position { border-color: rgba(180, 83, 9, 0.65); }
+.rank-athlete { color: var(--color-text) !important; font-weight: var(--font-weight-semibold); }
+.rank-final-time { color: var(--color-primary-light) !important; font-weight: var(--font-weight-bold); }
+
+.rankings-state {
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  color: var(--color-text-muted);
+  text-align: center;
+  background: rgba(10, 14, 39, 0.42);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.rankings-state h3 { margin: 0 0 var(--spacing-sm); color: var(--color-text); font-size: 1.2rem; }
+.rankings-state p { margin: 0; }
+.rankings-error { border-color: rgba(239, 68, 68, 0.45); }
+
+@media (max-width: 700px) {
+  .rankings-toolbar { align-items: stretch; flex-direction: column; }
+  .competition-select-wrap { min-width: 100%; }
+  .rank-table th, .rank-table td { padding: var(--spacing-sm) var(--spacing-md); }
+  .rankings-panel { padding: var(--spacing-md); }
+}

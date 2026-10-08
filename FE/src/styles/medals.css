@@ -1,0 +1,59 @@
+.medals-content { display: flex; max-width: 1280px; flex-direction: column; gap: var(--spacing-2xl); margin: 0 auto; }
+.medals-section {
+  padding: clamp(var(--spacing-lg), 4vw, var(--spacing-2xl));
+  background: linear-gradient(145deg, rgba(37, 45, 74, 0.88), rgba(26, 31, 58, 0.94));
+  border: 1px solid rgba(77, 217, 255, 0.18);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  backdrop-filter: blur(14px);
+}
+.medals-section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--spacing-md); margin-bottom: var(--spacing-lg); }
+.medals-eyebrow { margin-bottom: var(--spacing-xs); color: var(--color-primary-light); font-size: var(--font-size-caption); font-weight: var(--font-weight-semibold); letter-spacing: 0.12em; }
+.medals-section-heading h2 { margin: 0; color: var(--color-text); font-size: clamp(1.35rem, 3vw, 1.8rem); }
+.medals-country-count { color: var(--color-text-muted); font-size: var(--font-size-small); white-space: nowrap; }
+.medals-table-scroll { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+.medals-table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
+.medals-table th { padding: var(--spacing-md) var(--spacing-lg); color: var(--color-text-muted); background: rgba(10, 14, 39, 0.72); font-size: var(--font-size-caption); font-weight: var(--font-weight-semibold); letter-spacing: 0.06em; text-transform: uppercase; }
+.medals-table td { padding: var(--spacing-md) var(--spacing-lg); color: var(--color-text-muted); border-top: 1px solid rgba(42, 49, 80, 0.7); font-size: var(--font-size-small); }
+.medals-table tbody tr { transition: background var(--transition-fast); }
+.medals-table tbody tr:hover { background: rgba(77, 217, 255, 0.05); }
+.medals-table tbody .medals-leader-row { background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.025)); }
+.medals-rank { display: inline-flex; min-width: 2.25rem; min-height: 2.25rem; align-items: center; justify-content: center; color: var(--color-text-muted); background: rgba(10, 14, 39, 0.58); border: 1px solid var(--color-border); border-radius: 50%; font-weight: var(--font-weight-bold); }
+.medals-rank-leader { border-color: rgba(245, 158, 11, 0.65); box-shadow: 0 0 16px rgba(245, 158, 11, 0.18); }
+.medals-country { color: var(--color-text) !important; font-weight: var(--font-weight-semibold); }
+.medals-count, .medals-total { font-variant-numeric: tabular-nums; text-align: center; }
+.medals-gold { color: #fbbf24 !important; }
+.medals-silver { color: #d5deeb !important; }
+.medals-bronze { color: #d88a53 !important; }
+.medals-total { color: var(--color-primary-light) !important; font-weight: var(--font-weight-bold); }
+
+.competition-medal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: var(--spacing-lg); }
+.competition-medal-card { min-width: 0; padding: var(--spacing-lg); background: linear-gradient(145deg, rgba(10, 14, 39, 0.55), rgba(26, 31, 58, 0.7)); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+.competition-medal-card-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-sm); }
+.competition-medal-gender { color: var(--color-text-muted); font-size: var(--font-size-caption); }
+.competition-medal-card h3 { margin: var(--spacing-md) 0 var(--spacing-lg); color: var(--color-text); font-size: 1.2rem; }
+.competition-podium { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--spacing-sm); }
+.podium-place { display: flex; min-width: 0; min-height: 148px; flex-direction: column; align-items: flex-start; gap: var(--spacing-xs); padding: var(--spacing-md); background: rgba(10, 14, 39, 0.56); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.podium-medal { font-size: 1.35rem; line-height: 1; }
+.podium-label { color: var(--color-text-muted); font-size: 0.65rem; font-weight: var(--font-weight-semibold); letter-spacing: 0.04em; text-transform: uppercase; }
+.podium-place strong { width: 100%; margin-top: auto; overflow: hidden; color: var(--color-text); font-size: var(--font-size-small); text-overflow: ellipsis; white-space: nowrap; }
+.podium-country, .podium-unawarded { color: var(--color-text-muted); font-size: var(--font-size-caption); }
+.podium-gold { border-color: rgba(245, 158, 11, 0.38); }
+.podium-silver { border-color: rgba(203, 213, 225, 0.3); }
+.podium-bronze { border-color: rgba(180, 83, 9, 0.4); }
+.competition-no-medals { margin: var(--spacing-md) 0 0; color: var(--color-text-muted); font-size: var(--font-size-caption); }
+.medals-state, .medals-empty { padding: var(--spacing-2xl) var(--spacing-lg); color: var(--color-text-muted); text-align: center; background: rgba(10, 14, 39, 0.42); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+.medals-state h2, .medals-empty h3 { margin: 0 0 var(--spacing-sm); color: var(--color-text); font-size: 1.2rem; }
+.medals-state p, .medals-empty p { margin: 0; }
+.medals-error { border-color: rgba(239, 68, 68, 0.45); }
+.medals-state .competition-spinner { margin-bottom: var(--spacing-md); }
+
+@media (max-width: 640px) {
+  .medals-section { padding: var(--spacing-md); }
+  .medals-table th, .medals-table td { padding: var(--spacing-sm) var(--spacing-md); }
+  .competition-podium { grid-template-columns: 1fr; }
+  .podium-place { min-height: 0; display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: var(--spacing-sm); }
+  .podium-medal { grid-row: span 2; }
+  .podium-label, .podium-place strong, .podium-country, .podium-unawarded { grid-column: 2; }
+  .podium-place strong { margin-top: 0; }
+}
