@@ -94,6 +94,10 @@ const publicRoutes: RouteObject[] = [
 
 const athleteRoutes: RouteObject[] = [
   {
+    path: '/dashboard',
+    element: <RequireRole role="ATHLETE"><Navigate to="/athlete" replace /></RequireRole>,
+  },
+  {
     path: '/athlete',
     element: (
       <RequireRole role="ATHLETE"><AppLayout><AthleteDashboard /></AppLayout></RequireRole>
