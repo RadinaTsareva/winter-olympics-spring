@@ -14,6 +14,7 @@ import com.example.winter_olympics.repository.CompetitionRepository;
 import com.example.winter_olympics.entity.Role;
 import com.example.winter_olympics.entity.User;
 import com.example.winter_olympics.repository.UserRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/registrations")
+@SecurityRequirement(name = "bearerAuth")
 public class CompetitionRegistrationController {
 
     private final CompetitionRegistrationRepository registrationRepository;

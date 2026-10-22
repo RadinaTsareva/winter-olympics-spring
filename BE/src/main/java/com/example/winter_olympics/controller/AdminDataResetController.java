@@ -3,6 +3,7 @@ package com.example.winter_olympics.controller;
 import com.example.winter_olympics.dto.AdminDataResetRequest;
 import com.example.winter_olympics.dto.AdminDataResetResponse;
 import com.example.winter_olympics.service.AdminDataResetService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/admin")
+@SecurityRequirement(name = "bearerAuth")
 public class AdminDataResetController {
 
     private final AdminDataResetService resetService;

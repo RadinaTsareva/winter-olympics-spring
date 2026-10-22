@@ -11,6 +11,7 @@ import com.example.winter_olympics.exception.BadRequestException;
 import com.example.winter_olympics.exception.NotFoundException;
 import com.example.winter_olympics.dto.SlalomRankingResponse;
 import com.example.winter_olympics.dto.SlalomResultResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,7 @@ public class SlalomResultController {
     }
 
     @PostMapping("/first-run")
+    @SecurityRequirement(name = "bearerAuth")
     @ResponseStatus(HttpStatus.CREATED)
     public SlalomResult saveFirstRun(
             @Valid @RequestBody SlalomResultRequest request
@@ -73,6 +75,7 @@ public class SlalomResultController {
     }
 
     @PostMapping("/second-run")
+    @SecurityRequirement(name = "bearerAuth")
     public SlalomResult saveSecondRun(
             @Valid @RequestBody SlalomResultRequest request
     ) {
@@ -125,6 +128,7 @@ public class SlalomResultController {
     }
 
     @GetMapping("/second-run/participants/{competitionId}")
+    @SecurityRequirement(name = "bearerAuth")
     public List<SlalomResultResponse> getSecondRunParticipants(
             @PathVariable Long competitionId) {
 
@@ -135,6 +139,7 @@ public class SlalomResultController {
     }
 
     @GetMapping("/second-run/start-order/{competitionId}")
+    @SecurityRequirement(name = "bearerAuth")
     public List<SlalomResultResponse> getSecondRunStartOrder(
             @PathVariable Long competitionId) {
 

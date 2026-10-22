@@ -10,6 +10,7 @@ import com.example.winter_olympics.exception.NotFoundException;
 import com.example.winter_olympics.repository.AthleteRepository;
 import com.example.winter_olympics.repository.CountryRepository;
 import com.example.winter_olympics.repository.UserRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/athletes")
+@SecurityRequirement(name = "bearerAuth")
 public class AthleteController {
 
     private final AthleteRepository athleteRepository;

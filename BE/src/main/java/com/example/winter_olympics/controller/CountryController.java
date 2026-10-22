@@ -3,12 +3,14 @@ package com.example.winter_olympics.controller;
 import com.example.winter_olympics.entity.Country;
 import com.example.winter_olympics.repository.CountryRepository;
 import com.example.winter_olympics.exception.NotFoundException;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/countries")
+@SecurityRequirement(name = "bearerAuth")
 public class CountryController {
 
     private final CountryRepository countryRepository;

@@ -6,6 +6,7 @@ import com.example.winter_olympics.repository.CompetitionRepository;
 import com.example.winter_olympics.exception.BadRequestException;
 import com.example.winter_olympics.exception.NotFoundException;
 import com.example.winter_olympics.entity.CompetitionType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class CompetitionController {
     }
 
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     @ResponseStatus(HttpStatus.CREATED)
     public Competition createCompetition(
             @Valid @RequestBody CompetitionRequest request
@@ -53,6 +55,7 @@ public class CompetitionController {
     }
 
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public Competition updateCompetition(
             @PathVariable Long id,
             @Valid @RequestBody CompetitionRequest request
@@ -73,6 +76,7 @@ public class CompetitionController {
     }
 
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompetition(@PathVariable Long id) {
         competitionRepository.findById(id)

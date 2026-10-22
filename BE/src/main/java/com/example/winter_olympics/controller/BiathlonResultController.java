@@ -12,6 +12,7 @@ import com.example.winter_olympics.repository.CompetitionRegistrationRepository;
 import com.example.winter_olympics.service.BiathlonService;
 import com.example.winter_olympics.exception.BadRequestException;
 import com.example.winter_olympics.exception.NotFoundException;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,7 @@ public class BiathlonResultController {
     }
 
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     @ResponseStatus(HttpStatus.CREATED)
     public BiathlonResultResponse saveResult(
             @Valid @RequestBody BiathlonResultRequest request
